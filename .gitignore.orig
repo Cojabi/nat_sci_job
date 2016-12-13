@@ -1,0 +1,10 @@
+<<<<<<< HEAD
+.ipynb_checkpoints/
+.Rhistroy
+.ipynb_checkpoints/
+=======
+*/.ipynb_checkpoints/
+.Rhistory
+.ipynb_checkpoints/
+
+>>>>>>> 554c31c9e32e3208081d1f050a2d839703aff07a

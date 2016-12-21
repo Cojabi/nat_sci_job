@@ -24,8 +24,6 @@ class ScienceJobSpider(scrapy.Spider):
                 'http://jobs.sciencecareers.org/jobs/neuroscience',
                 'http://jobs.sciencecareers.org/jobs/virology']
         for urrl in urls:
-            field = urrl.split('/')[-1]
-            global field
             yield scrapy.Request(url=urrl, callback=self.get_jobs)
 
 ## jobs in field
@@ -43,14 +41,15 @@ class ScienceJobSpider(scrapy.Spider):
             yield scrapy.Request(next_page, callback=self.get_jobs)
 
     def parse(self, response):
+        details = response.css('.palm-one-half') 
         yield {
             'employer': response.css('dd.grid-item.three-fifths.portable-one-whole.palm-one-half span::text').extract_first(),
             'location': response.css('dl.grid div.cf.margin-bottom-5 dd.grid-item.three-fifths.portable-one-whole.palm-one-half::text').extract()[2].strip('\r\n\t\t\t\t'),
             'salary': response.css('dl.grid div.cf.margin-bottom-5 dd.grid-item.three-fifths.portable-one-whole.palm-one-half::text').extract()[3].strip('\r\n\t\t\t\t'),
             'posted': response.css('dd.grid-item.three-fifths.portable-one-whole.palm-one-half span::text').extract()[1],
-            'job_type': response.css('dd.grid-item.three-fifths.portable-one-whole.palm-one-half a::text').extract()[-1],
+            'job_type': " ".join(set(details.xpath('//div[dt[contains(text(),"Discipline")]]//dd//a//text()').extract())),
             'job_title': response.css('h1::text').extract_first(),
-            'job_description': BeautifulSoup(response.css('div.block.fix-text').extract_first()).get_text().strip('\r\n\t\t\t\t\t\t') + ' ' + field
+            'job_description': BeautifulSoup(response.css('div.block.fix-text').extract_first()).get_text().strip('\r\n\t\t\t\t\t\t')
             }
 
 
